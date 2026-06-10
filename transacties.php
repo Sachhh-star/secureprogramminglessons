@@ -9,7 +9,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 $id = $_GET['id'];
 // opdracht2 id van user
-if ($id != $_SESSION['user']['id']){
+if ($id != $_SESSION['user']['id'] && $_SESSION['user']['isAdmin'] != 1){
     header("location: dashboard.php");
 
     exit;
@@ -66,7 +66,7 @@ $incomingTransactions = $stmt->fetchAll();
                 <!-- oplossen hacking van uitgaande transacties -->
                 <?php foreach ($outgoingTransactions as $transaction): ?>
                     <div class="flex justify-between mb-2">
-                        <p><?= $transaction['description'] ?></p>
+                        <p><?= htmlspecialchars($transaction['description']) ?></p>
                         <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
                     </div>
                 <?php endforeach; ?>
@@ -82,7 +82,7 @@ $incomingTransactions = $stmt->fetchAll();
                 <div class="bg-green-100 p-2 rounded">
                     <?php foreach ($incomingTransactions as $transaction): ?>
                         <div class="flex justify-between mb-2">
-                            <p><?= $transaction['description'] ?></p>
+                            <p><?= htmlspecialchars($transaction['description']) ?></p>
                             <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
                         </div>
                     <?php endforeach; ?>

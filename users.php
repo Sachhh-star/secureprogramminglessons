@@ -2,7 +2,7 @@
 session_start();
 include 'includes/db.php';
 
-if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true){
+if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['user']['isAdmin'] != 1){
     header("location: index.php");
     exit;
 }
@@ -40,7 +40,7 @@ $users = $stmt->fetchAll();
         <?php foreach ($users as $user): ?>
             <tr>
                 <td class="border-b p-2"><?= $user['id'] ?></td>
-               <td class="border-b p-2"><a href="transacties.php?id=<?= $user['id'] ?>"><?= $user['username'] ?></a></td>
+               <td class="border-b p-2"><a href="transacties.php?id=<?= $user['id'] ?>"><?= htmlspecialchars($user['username']) ?></a></td>
                 <td class="border-b p-2">€<?= number_format($user['balance'], 2, ',', '.') ?></td>
             </tr>
         <?php endforeach; ?>
