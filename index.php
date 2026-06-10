@@ -13,13 +13,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // kwetsbaar voor SQL injectie (opdraacht 1)
-    $sql = "SELECT * FROM user WHERE username = ? AND password = ?";
+    $sql = "SELECT * FROM user WHERE username = ?";
     $result = $pdo->prepare($sql);
-    $result->execute([$username, $password]);
+    $result->execute([$username]);
     $user = $result->fetch();
 
     // Controleer of er een rij is gevonden
-    if($result->rowCount() > 0) {
+    // fix the hash
+    if($user && password_verify($password, $user['password'])) {
         // Gebruiker is ingelogd
         $_SESSION['loggedin'] = true;
         $_SESSION['username'] = $username;
@@ -68,13 +69,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="mt-4 p-2 border border-gray-300 rounded">
         <label class="block text-sm font-medium text-gray-700">Uitgevoerde SQL-query:</label>
-        <textarea readonly class="mt-1 block w-full border rounded-md py-2 px-3 resize-none" rows="4"><? //als $sql bestaat geef $sql, anders geef aan dat deze nog niet is ingevuld
+        
+        //als $sql bestaat geef $sql, anders geef aan dat deze nog niet is ingevuld
+        <!-- <textarea readonly class="mt-1 block w-full border rounded-md py-2 px-3 resize-none" rows="4"><? 
         if(isset($sql)) {
             echo $sql;
         } else {
             echo "Log in om je SQL query te zien";
         }
-        ?></textarea>
+        ?></textarea> -->
     </div>
 
     
