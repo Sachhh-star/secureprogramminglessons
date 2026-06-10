@@ -8,6 +8,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 }
 
 $id = $_GET['id'];
+// opdracht2 id van user
+if ($id != $_SESSION['user']['id']){
+    header("location: dashboard.php");
+
+    exit;
+}
 
 // Gebruikersgegevens ophalen
 $stmt = $pdo->prepare("SELECT * FROM user WHERE id = ?");
@@ -57,6 +63,7 @@ $incomingTransactions = $stmt->fetchAll();
             <?php if (!empty($outgoingTransactions)): ?>
             <h2 class="text-lg text-center font-bold mb-6">Uitgaande Transacties</h2>
             <div class="bg-red-100 p-2 rounded">
+                <!-- oplossen hacking van uitgaande transacties -->
                 <?php foreach ($outgoingTransactions as $transaction): ?>
                     <div class="flex justify-between mb-2">
                         <p><?= $transaction['description'] ?></p>
