@@ -2,11 +2,14 @@
 session_start();
 include 'includes/db.php';
 
-if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['user']['isAdmin'] != 1){
+if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true ){
     header("location: index.php");
     exit;
 }
-
+if ($_SESSION['user']['isAdmin'] != 1){
+    header("location: dashboard.php");
+    exit;
+}
 // show users
 
 $stmt = $pdo->prepare("SELECT * FROM user");
