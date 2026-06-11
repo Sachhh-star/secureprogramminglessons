@@ -12,7 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ontvanger = $_POST['ontvanger'];
     $bedrag = $_POST['bedrag'];
     // peobleem oplossen met de bedrag
-    if ($bedrag <= 0) {
+    // fiter de bedrag zodat er geen negatieve getallen kunnen worden ingevoerd
+    if (!is_numeric($bedrag)) {
+        $error = "Het bedrag moet een geldig nummer zijn.";
+    } else if ($bedrag <= 0) {
         $error = "Het bedrag moet groter zijn dan 0.";
     } else {
 
