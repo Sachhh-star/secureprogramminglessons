@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Registreer hier</a>
     </div>
 
-    <div class="mt-4 p-2 border border-gray-300 rounded">
+    <!-- <div class="mt-4 p-2 border border-gray-300 rounded">
         <label class="block text-sm font-medium text-gray-700">Uitgevoerde SQL-query:</label>
 
         <textarea readonly class="mt-1 block w-full border rounded-md py-2 px-3 resize-none" rows="4"><? //als $sql bestaat geef $sql, anders geef aan dat deze nog niet is ingevuld
@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Log in om je SQL query te zien";
         }
         ?></textarea>
-    </div>
+    </div> -->
 
 
 </body>

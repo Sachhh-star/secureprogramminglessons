@@ -17,6 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->rowCount() == 0) {
                 // fix the password before storing it
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                // $hashed_password = base64_encode(password_hash($password, PASSWORD_DEFAULT));
+
 
                 $stmt = $pdo->prepare("INSERT INTO user (username, password, balance, isAdmin) VALUES (?, ?, 100, 0)");
                 $stmt->execute([$username, $hashed_password]);
