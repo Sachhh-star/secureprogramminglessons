@@ -18,8 +18,26 @@ Deze repository bevat de broncode voor een educatieve webapplicatie die is ontwo
 1. Open een webbrowser en ga naar [http://localhost:8000](http://localhost:8000) om de applicatie te bekijken.
 2. Om phpMyAdmin te gebruiken, ga naar [http://localhost:8080](http://localhost:8080).
 
-## wat hebben we berbetteren maken van deze opdracht
+## Wat hebben we verbeterd aan deze opdracht? (7 Beveiligingsfases)
 
-# fase1 
+### 1. SQL-injecties (`index.php`)
+* **Oplossing:** We hebben de inlogpagina beveiligd door gebruik te maken van **Prepared Statements** met PDO (`$pdo->prepare()`) in plaats van directe gebruikersinvoer in de SQL-query string te plaatsen. Dit voorkomt dat aanvallers kwaadaardige SQL-code kunnen uitvoeren.
 
-# fase2 
+### 2. Broken Access Control (`transacties.php`)
+* **Oplossing:** We hebben een autorisatiecontrole toegevoegd op basis van de sessie. Gebruikers kunnen nu alleen nog hun eigen transacties inzien (of alle transacties als ze een Admin-account hebben). Ongeautoriseerde pogingen worden omgeleid naar `dashboard.php`.
+
+### 3. Gevoelige data die zichtbaar is / Sensitive Data Exposure (`transacties.php` / database)
+* **Oplossing:** Gevoelige gebruikersgegevens (zoals wachtwoorden) worden niet langer in leesbare platte tekst in de database opgeslagen. Daarnaast zijn de parameters in de URL beveiligd via autorisatiecontroles, zodat transactie-ID's van andere gebruikers niet zomaar ingezien kunnen worden.
+
+### 4. Data validatie / Controle op invoer (`dashboard.php`)
+* **Oplossing:** We hebben invoervalidatie toegevoegd bij het overmaken van geld. Er wordt gecontroleerd of het bedrag numeriek is en groter is dan 0 (`$bedrag <= 0`), waardoor het niet langer mogelijk is om negatieve bedragen over te maken en andermans saldo te stelen.
+
+### 5. Cryptografie / Versleuteling (`register.php`)
+* **Oplossing:** Nieuwe gebruikerswachtwoorden worden nu opgeslagen als een sterke eenrichtingshash met behulp van `password_hash($password, PASSWORD_DEFAULT)`. Dit zorgt tevens voor automatische en veilige salting.
+
+### 6. Cross-site scripting / XSS (`transacties.php` & `includes/header.php`)
+* **Oplossing:** Gebruikersinvoer en gegevens uit de database (zoals de transactie-omschrijving en gebruikersnamen) worden nu veilig ontsmet met `htmlspecialchars()` voordat ze in de HTML-code worden weergegeven. Hierdoor kunnen kwaadaardige JavaScript-tags (zoals `<script>`) niet meer in de browser van de gebruiker worden uitgevoerd.
+
+### 7. Problemen met inloggen en wachtwoorden / Identification & Authentication (`index.php`)
+* **Oplossing:** We hebben een veilige wachtwoordverificatie met `password_verify()` geïmplementeerd. Daarnaast hebben we **transparante wachtwoordmigratie** toegevoegd in `index.php`. Zodra een bestaande gebruiker (met een plaintext wachtwoord uit `userTable.php`) succesvol inlogt, wordt zijn wachtwoord automatisch geüpgraded naar een veilige hash in de database.
+

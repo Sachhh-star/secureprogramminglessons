@@ -23,16 +23,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!isset($_SESSION['login_attempts'])) {
         $_SESSION['login_attempts'] = 0;
     }
+
+    $authenticated = false;
+
     if ($_SESSION['login_attempts'] >= 3) {
         $error = "Te veel mislukte inlogpogingen. Je bent tijdelijk geblokkeerd";
     } else {
-        // check if the user exists and the password is correct
-        if (!$user || !password_verify($password, $user['password'])) {
+        if ($user) {
+            // check if the password is a secure bcrypt hash (starts with $2y$)
+            if (strpos($user['password'], '$2y$') === 0) {
+                if (password_verify($password, $user['password'])) {
+                    $authenticated = true;
+                }
+            } else {
+                // if it is plaintext (legacy users from userTable.php)
+                if ($password === $user['password']) {
+                    $authenticated = true;
+                    // automatically upgrade the plaintext password to a secure hash
+                    $new_hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    $update_stmt = $pdo->prepare("UPDATE user SET password = ? WHERE id = ?");
+                    $update_stmt->execute([$new_hashed_password, $user['id']]);
+                    // update the local $user object for the session
+                    $user['password'] = $new_hashed_password;
+                }
+            }
+        }
+
+        if (!$authenticated) {
             $_SESSION['login_attempts'] += 1;
             $error = "Ongeldige gebruikersnaam of wachtwoord. Poging " . $_SESSION['login_attempts'] . " van 3.";
         }
     }
-    if ($user && password_verify($password, $user['password'])) {
+
+    if ($authenticated) {
         // Gebruiker is ingelogd
         $_SESSION['login_attempts'] = 0;
         $_SESSION['loggedin'] = true;
