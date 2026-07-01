@@ -12,8 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // check the session if it wrong
-    // kwetsbaar voor SQL injectie (opdraacht 1)
+    // SQL injectie opdraacht 1
     $sql = "SELECT * FROM user WHERE username = ?";
     $result = $pdo->prepare($sql);
     $result->execute([$username]);
@@ -21,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // if the user has tried to login more than 3 times, block them for a while
     if (!isset($_SESSION['login_attempts'])) {
+        // if user successfully login, reset the login to 0
         $_SESSION['login_attempts'] = 0;
     }
 
@@ -32,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user) {
             // check if the password is a secure bcrypt hash (starts with $2y$)
             if (strpos($user['password'], '$2y$') === 0) {
+                // opdracht2 data exposure 
                 if (password_verify($password, $user['password'])) {
                     $authenticated = true;
                 }
@@ -41,6 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $authenticated = true;
                     // automatically upgrade the plaintext password to a secure hash
                     $new_hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    // hashed is like, when you create new account and password this will send into your database with random password, so you dont see your real password.
+                    // for id url
                     $update_stmt = $pdo->prepare("UPDATE user SET password = ? WHERE id = ?");
                     $update_stmt->execute([$new_hashed_password, $user['id']]);
                     // update the local $user object for the session
@@ -50,6 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if (!$authenticated) {
+            // if the user is not authenticated it need to count 1 time until 3 if 3 times it's will be blocked
             $_SESSION['login_attempts'] += 1;
             $error = "Ongeldige gebruikersnaam of wachtwoord. Poging " . $_SESSION['login_attempts'] . " van 3.";
         }

@@ -7,9 +7,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
+// check the id 
+// broken access control
 $id = $_GET['id'];
 // opdracht2 id van user
 if ($id != $_SESSION['user']['id'] && $_SESSION['user']['isAdmin'] != 1){
+    // toegang controlleren
     header("location: dashboard.php");
 
     exit;
@@ -66,6 +69,7 @@ $incomingTransactions = $stmt->fetchAll();
                 <!-- oplossen hacking van uitgaande transacties -->
                 <?php foreach ($outgoingTransactions as $transaction): ?>
                     <div class="flex justify-between mb-2">
+                        <!-- htmlspecialchars is this -->
                         <p><?= htmlspecialchars($transaction['description']) ?></p>
                         <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
                     </div>

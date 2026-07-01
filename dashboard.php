@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'includes/db.php';
-
+// check if the user login
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("location: index.php");
     exit;
@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bedrag = $_POST['bedrag'];
     // peobleem oplossen met de bedrag
     // fiter de bedrag zodat er geen negatieve getallen kunnen worden ingevoerd
+    // check bedrag 
     if (!is_numeric($bedrag)) {
         $error = "Het bedrag moet een geldig nummer zijn.";
     } else if ($bedrag <= 0) {

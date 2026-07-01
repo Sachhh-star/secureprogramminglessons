@@ -6,6 +6,7 @@ if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true ){
     header("location: index.php");
     exit;
 }
+// only admin can assit into the all user to dashbord (i think)
 if ($_SESSION['user']['isAdmin'] != 1){
     header("location: dashboard.php");
     exit;
